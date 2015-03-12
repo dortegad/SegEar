@@ -14,7 +14,7 @@ SegEarWindow::SegEarWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    std::string ear_carcade_file = "cascade.xml";
+    std::string ear_carcade_file = "/home/dortega/BIOMETRIA/Practicas/prac4/SegEar/debug/cascade.xml";
 
     if( !earClassifier.load(ear_carcade_file ) )
     {
@@ -139,9 +139,8 @@ void SegEarWindow::muestraImagen(QLabel *etiquetaPresentar, cv::Mat &img)
 //-------------------------------------------------------------------------------------------
 void SegEarWindow::muestraImagen()
 {
-    std::string rutaFichero = this->ficherosImagen[this->fichActual];
-    std::string nombreFichero = rutaFichero.substr(rutaFichero.find_last_of("/\\") + 1);
-    cv::Mat imagen = cv::imread(rutaFichero);
+    std::string nombreFichero = this->ficherosImagen[this->fichActual];
+    cv::Mat imagen = cv::imread(nombreFichero);
     if (this->zonasGT.find(nombreFichero) != this->zonasGT.end())
     {
         cv::rectangle(imagen,this->zonasGT[nombreFichero],cv::Scalar(255,0,0));
@@ -166,22 +165,21 @@ void SegEarWindow::estadoBotones()
 //-------------------------------------------------------------------------------------------
 void SegEarWindow::on_pBDetectar_clicked()
 {
-    std::string rutaFichero = this->ficherosImagen[this->fichActual].c_str();
-    std::string nombreFichero = rutaFichero.substr(rutaFichero.find_last_of("/\\") + 1);
-    cv::Mat imagen = cv::imread(rutaFichero);
-    this->detectAndDisplay(imagen);
-    if (this->zonasGT.find(nombreFichero) != this->zonasGT.end())
-    {
-        cv::rectangle(imagen,this->zonasGT[nombreFichero],cv::Scalar(255,0,0));
-    }
-    muestraImagen(this->ui->LImagen,imagen);
+   std::string nombreFichero = this->ficherosImagen[this->fichActual];
+   cv::Mat imagen = cv::imread(nombreFichero);
+   this->detectAndDisplay(imagen);
+   if (this->zonasGT.find(nombreFichero) != this->zonasGT.end())
+   {
+       cv::rectangle(imagen,this->zonasGT[nombreFichero],cv::Scalar(255,0,0));
+   }
+   muestraImagen(this->ui->LImagen,imagen);
 }
 
 //-------------------------------------------------------------------------------------------
 void SegEarWindow::on_pBGreatTruthFile_clicked()
 {
     QString nombreFileGreatTruth = QFileDialog:: QFileDialog::getOpenFileName(this, tr("Great truth file"),
-                                                                         ui->lEGreatTruthFile->text(),
+                                                                         "/GreatTruth.txt",
                                                                          tr("*.txt"));
     if (nombreFileGreatTruth == "")
         return;
@@ -202,13 +200,4 @@ void SegEarWindow::on_pBGreatTruthFile_clicked()
         }
         fileGT.close();
     }
-
-    std::string rutaFichero = this->ficherosImagen[this->fichActual].c_str();
-    std::string nombreFichero = rutaFichero.substr(rutaFichero.find_last_of("/\\") + 1);
-    cv::Mat imagen = cv::imread(rutaFichero);
-    if (this->zonasGT.find(nombreFichero) != this->zonasGT.end())
-    {
-        cv::rectangle(imagen,this->zonasGT[nombreFichero],cv::Scalar(255,0,0));
-    }
-    muestraImagen(this->ui->LImagen,imagen);
 }
